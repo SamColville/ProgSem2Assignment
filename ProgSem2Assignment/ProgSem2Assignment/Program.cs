@@ -9,8 +9,17 @@ namespace KeepingScores
 {
     class Program
     {
+        //Format strings for reports
         static string formatReportOne = "{0,-15}{1,-25}{2,-15}{3,10}{4,15}{5,20}";
-        static string formatReportTwo = "{0,-15}{1,5}{2,5}{3,5}{4,5}{5,5}{6,5}{7,5}";
+        static string formatReportTwo = "{0,-15}{1,11}{2,11}{3,11}{4,11}{5,11}{6,11}{7,8}";
+
+        //parallel strings for ocean and cessel types
+        static string[] oceanNames = { "Pacific", "Atlantic", "Mediterranean", "Indian Ocean", "Other Seas"};
+        static int[] oceanCode = { 1, 2, 3, 4, 5 };
+        static string[] vesselType = {"AirCarrier", "Battleship", "Destroyer", "Frigate", "NuclearSub", "Minesweep"};
+        static int[] vesselCode = { 1, 2, 3, 4, 5, 6 };
+
+
         static void Main(string[] args)
         {
             int menuOpt = 0;
@@ -30,6 +39,9 @@ namespace KeepingScores
                         break;
                     case 4:
                         break;
+                    case 5:
+                        FileOutput();
+                        break;
                     default:
                         Console.WriteLine("Invalid choice. Please try again.");
                         break;
@@ -46,6 +58,7 @@ namespace KeepingScores
         static int MenuChoice()
         {
             int choice;
+            Console.WriteLine("");//Used for formatting
             Console.WriteLine("Menu");
             Console.WriteLine("");
             Console.WriteLine("1. Vessel Report");
@@ -56,17 +69,21 @@ namespace KeepingScores
             Console.Write("Enter choice :  ");
             choice = int.Parse(Console.ReadLine());
             return choice;
-        }
+        }//EOM
+
+
+
+
 
         //Method for option 1.
         static void MenuOne()
         {
-            Console.WriteLine("Menu option 1");
+            Console.WriteLine("\nMenu option 1");
             Console.WriteLine(formatReportOne, "Location", "Function", "Vessel Name", "Tonnage", "Crew", "Monthly Cost");
-            Console.WriteLine("\n");
+            Console.WriteLine("");//table formatting
             MenuOneReport();
 
-        }
+        }//EOM
 
         //Method goes through csv to calculate cost and total costs/numbers
         //for full report of fleet.
@@ -89,8 +106,9 @@ namespace KeepingScores
                 crew = int.Parse(fields[3]);
                 locale = int.Parse(fields[4]);
                 cost = tonn * crew;
-                locationStr = LocationString(locale);
-                typeStr = TypeString(type);
+                locationStr = oceanNames[locale-1];
+                typeStr = vesselType[type - 1];
+
                 //Report only displays values for ships with a tonnage
                 //greater than 3500 and only acumulates data from
                 //those vessels.
@@ -108,16 +126,38 @@ namespace KeepingScores
             //ReadKey to provide pause before returning to menu
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
-        }
+        }//EOM
 
-        static void MenuTwoReport()
+
+
+
+
+        //Option 2 start
+        //Method for option 2. 
+        static void MenuTwo()
+        {
+            int[] vesselGrandTotals = { 0, 0, 0, 0, 0, 0 };
+            Console.WriteLine("\nMenu option 2");
+            int finalTotal =  MenuTwoReport(vesselGrandTotals);
+            Console.WriteLine(formatReportTwo, "Grand Total", vesselGrandTotals[0],vesselGrandTotals[1],vesselGrandTotals[2],vesselGrandTotals[3],vesselGrandTotals[4], vesselGrandTotals[5], finalTotal);
+        }//EOM
+
+        //Report method for displaying a breakdown of fleet
+        //in each ocean
+        static int MenuTwoReport(int[] vesselGrandTotals)
         {
             string[] fields = new string[5];
-            string lineIn, locationStr, typeStr;
-            int type, locale;
+            int[] vesselTotals = { 0, 0, 0, 0, 0, 0 };
+            int[] oceanTotals = { 0, 0, 0, 0, 0 };
+
+            string lineIn;
+            int type, locale, locationChange = 1, grandTotal = 0, locationTotal = 0;
             FileStream fs = new FileStream("FrenchMF.txt", FileMode.Open, FileAccess.Read);
             StreamReader inputStream = new StreamReader(fs);
             lineIn = inputStream.ReadLine();
+
+            Console.WriteLine(formatReportTwo, "Location", vesselType[0],vesselType[1],vesselType[2],vesselType[3],vesselType[4],vesselType[5],"Total" );
+            Console.WriteLine("");//table formatting
 
             while (lineIn != null)
             {
@@ -125,151 +165,103 @@ namespace KeepingScores
                 type = int.Parse(fields[1]);
                 locale = int.Parse(fields[4]);
 
-                switch (locale)
+                if (locale != locationChange)
                 {
-                    case 1:
-                        break;
-                    case 2:
-                        break;
-                    case 3:
-                        break;
-                    case 4:
-                        break;
-                    case 5:
-                        break;
-                    default:
-                        break;
+                    for (int i = 0; i < vesselGrandTotals.Length; i++)
+                    {
+                        vesselGrandTotals[i] += vesselTotals[i];
+                    }
+                    locationTotal = vesselTotals.Sum();
+                    Console.WriteLine(formatReportTwo, oceanNames[locale - 1], vesselTotals[0], vesselTotals[1], vesselTotals[2], vesselTotals[3], vesselTotals[4], vesselTotals[5], locationTotal);
+                    locationChange++;
+                    for (int i = 0; i < vesselTotals.Length; i++)
+                    {
+                        vesselTotals[i] = 0;
+                    }
                 }
 
 
+                switch (locale)
+                {
+                    case 1:
+                        VesselSortAndTotal(vesselTotals, type);
+                        break;
+                    case 2:
+                        VesselSortAndTotal(vesselTotals, type);
+                        break;
+                    case 3:
+                        VesselSortAndTotal(vesselTotals, type);
+                        break;
+                    case 4:
+                        VesselSortAndTotal(vesselTotals, type);
+                        break;
+                    case 5:
+                        VesselSortAndTotal(vesselTotals, type);
+                        break;
+                    default:
+                        Console.WriteLine("ERROR IN METHOD MENUTWOREPORT LOCALE SWITCH");
+                        break;
+                }
+                grandTotal += 1;
+                lineIn = inputStream.ReadLine();
             }
-
             inputStream.Close();
-   
-        }
+            return grandTotal;
+        }//EOM
 
-        static void ShipTypeSort(int type)
+        //Method adds 1 to the relevant vessel type array
+        static void VesselSortAndTotal(int[] totlas, int f)
         {
-            if (type == 1)
-            {
-                
-            }
-            else if (type == 2)
-            {
-                
-            }
-            else if (type == 3)
-            {
-                
-            }
-            else if (type == 4)
-            {
-                
-            }
-            else if (type == 5)
-            {
-                
-            }
-            else if (type == 6)
-            {
-                
-            }
-            else
-            {
-                
-            }
-
-        }
-
-        //Method to sort location from csv file adn returns location as a string.
-        static string LocationString(int loc)
-        {
-            string location;
-
-            switch (loc)
+            switch(f)
             {
                 case 1:
-                    location = "Pacific";
+                    totlas[f - 1]++;
                     break;
                 case 2:
-                    location = "Atlantic";
+                    totlas[f - 1]++;
                     break;
                 case 3:
-                    location = "Mediterranean";
+                    totlas[f - 1]++;
                     break;
                 case 4:
-                    location = "Indian";
+                    totlas[f - 1]++;
                     break;
                 case 5:
-                    location = "Other";
-                    break;
-                default:
-                    location = "ERROR IN LOCATION";
-                    break;
-            }
-
-            return location;
-        }
-
-        //Method to sort csv file and return string of the 
-        //vessel type.
-        static string TypeString(int type)
-        {
-            string typeStr;
-
-            switch (type)
-            {
-                case 1:
-                    typeStr = "Aircraft Carrier";
-                    break;
-                case 2:
-                    typeStr = "Cruiser/Battleship";
-                    break;
-                case 3:
-                    typeStr = "Destroyer";
-                    break;
-                case 4:
-                    typeStr = "Frigate";
-                    break;
-                case 5:
-                    typeStr = "Nuclear Submarine";
+                    totlas[f - 1]++;
                     break;
                 case 6:
-                    typeStr = "Minelayer/Minesweeper";
+                    totlas[f - 1]++;
                     break;
                 default:
-                    typeStr = "ERROR IN TYPE";
+                    Console.WriteLine("ERROR IN VESSEL SORT AND TOTAL METHOD");
                     break;
             }
+        }//EOM
 
-            return typeStr;
-        }
 
-        //Method for option 2. 
-        static void MenuTwo()
-        {
-            Console.WriteLine("Menu option 2");
-        }
+
+
 
         //method for option 3.
         static void MenuThree()
         {
             string searchName="", displayMessage="";
-            Console.WriteLine("Menu option 3: Search for ship name. Type exit to return to main menu.");
+            Console.WriteLine("\nMenu option 3: Search for ship name. Type 'exit' to return to main menu.");
+
             while (searchName != "exit")
             {
+                
                 Console.Write("Enter ship name :   ");
+
                 searchName = Console.ReadLine();
-
                 displayMessage = SearchForShipName(searchName);
-                Console.WriteLine(displayMessage);
-                searchName.ToLower();
-
+                searchName = searchName.ToLower();
+                if (searchName != "exit")
+                {
+                    Console.WriteLine(displayMessage);
+                }
             }
-
-
-
-        }
+        }//EOM
 
         static string SearchForShipName(string searchName)
         {
@@ -287,7 +279,7 @@ namespace KeepingScores
 
                 if(searchName == fields[0])
                 {
-                    locationStr = LocationString(locale);
+                    locationStr = oceanNames[locale-1];
                     message = "Location :   " + locationStr;
                 }
                 else
@@ -297,12 +289,26 @@ namespace KeepingScores
 
                 lineIn = inputStream.ReadLine();
             }
-
-
-
             inputStream.Close();
             return message;
-        }
+        }//EOM
+
+
+
+        //Used in development to diaplay file
+        //contents for quick validation
+        static void FileOutput()
+        {
+            FileStream fs = new FileStream("FrenchMF.txt", FileMode.Open, FileAccess.Read);
+            StreamReader inputStream = new StreamReader(fs);
+            string lineIn = inputStream.ReadLine();
+            while(lineIn != null)
+            {
+                Console.WriteLine(lineIn);
+                lineIn = inputStream.ReadLine();
+            }
+
+        }//EOM
 
     }
 }
