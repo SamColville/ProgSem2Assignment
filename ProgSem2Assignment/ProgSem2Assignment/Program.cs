@@ -10,14 +10,11 @@ namespace KeepingScores
     class Program
     {
         //Format strings for reports
-        static string formatReportOne = "{0,-15}{1,-25}{2,-15}{3,10}{4,15}{5,20}";
+        static string formatReportOne = "{0,-15}{1,-15}{2,-15}{3,10}{4,15}{5,20}";
         static string formatReportTwo = "{0,-15}{1,11}{2,11}{3,11}{4,11}{5,11}{6,11}{7,8}";
 
-        //parallel strings for ocean and cessel types
         static string[] oceanNames = { "Pacific", "Atlantic", "Mediterranean", "Indian Ocean", "Other Seas"};
-        static int[] oceanCode = { 1, 2, 3, 4, 5 };
         static string[] vesselType = {"AirCarrier", "Battleship", "Destroyer", "Frigate", "NuclearSub", "Minesweep"};
-        static int[] vesselCode = { 1, 2, 3, 4, 5, 6 };
 
 
         static void Main(string[] args)
@@ -90,12 +87,11 @@ namespace KeepingScores
         static void MenuOneReport()
         {
             string[] fields = new string[5];
-            string lineIn, locationStr, typeStr;
-            int tonnTot = 0, crewTot = 0;
+            string lineIn;
+            int tonnTot = 0, crewCost = 0, crewTot = 0, locationChange = 1;
             double costTot = 0;
             int type, tonn, crew, cost, locale;
-            FileStream fs = new FileStream("FrenchMF.txt", FileMode.Open, FileAccess.Read);
-            StreamReader inputStream = new StreamReader(fs);
+            StreamReader inputStream = new StreamReader("FrenchMF.txt");
             lineIn = inputStream.ReadLine();
 
             while (lineIn != null)
@@ -105,10 +101,17 @@ namespace KeepingScores
                 tonn = int.Parse(fields[2]);
                 crew = int.Parse(fields[3]);
                 locale = int.Parse(fields[4]);
-                cost = tonn * crew;
-                locationStr = oceanNames[locale-1];
-                typeStr = vesselType[type - 1];
+                crewCost = GetCrewCost(type);
+                cost = crewCost * crew;
 
+                if(locale == locationChange)
+                {
+                    
+                }
+                else
+                {
+                    
+                }
                 //Report only displays values for ships with a tonnage
                 //greater than 3500 and only acumulates data from
                 //those vessels.
@@ -117,18 +120,26 @@ namespace KeepingScores
                     tonnTot += tonn;
                     crewTot += crew;
                     costTot += cost;
-                    Console.WriteLine(formatReportOne, locationStr, typeStr, fields[0], tonn, crew, cost);
+                    Console.WriteLine(formatReportOne, oceanNames[locale-1], vesselType[type-1], fields[0], tonn, crew, cost);
                 }
                 lineIn = inputStream.ReadLine();
             }
+            Console.WriteLine("");
             Console.WriteLine(formatReportOne, "Grand Totals", "", "", tonnTot, crewTot, costTot);
+            Console.WriteLine("");
             inputStream.Close();
             //ReadKey to provide pause before returning to menu
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
         }//EOM
 
-
+        static int GetCrewCost(int type)
+        {
+            int crewCost;
+            int[] crewCosts = { 2610, 2350, 2050, 999, 2550, 2510 };
+            crewCost = crewCosts[type - 1];
+            return crewCost;
+        }
 
 
 
@@ -137,9 +148,16 @@ namespace KeepingScores
         static void MenuTwo()
         {
             int[] vesselGrandTotals = { 0, 0, 0, 0, 0, 0 };
-            Console.WriteLine("\nMenu option 2");
+            Console.WriteLine("");
+            Console.WriteLine("Menu option 2");
+            Console.WriteLine("");
             int finalTotal =  MenuTwoReport(vesselGrandTotals);
+            Console.WriteLine("");
             Console.WriteLine(formatReportTwo, "Grand Total", vesselGrandTotals[0],vesselGrandTotals[1],vesselGrandTotals[2],vesselGrandTotals[3],vesselGrandTotals[4], vesselGrandTotals[5], finalTotal);
+            Console.WriteLine("");
+            //Pause at the end of report before returning to menu.
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
         }//EOM
 
         //Report method for displaying a breakdown of fleet
@@ -152,8 +170,7 @@ namespace KeepingScores
 
             string lineIn;
             int type, locale, locationChange = 1, grandTotal = 0, locationTotal = 0;
-            FileStream fs = new FileStream("FrenchMF.txt", FileMode.Open, FileAccess.Read);
-            StreamReader inputStream = new StreamReader(fs);
+            StreamReader inputStream = new StreamReader("FrenchMF.txt");
             lineIn = inputStream.ReadLine();
 
             Console.WriteLine(formatReportTwo, "Location", vesselType[0],vesselType[1],vesselType[2],vesselType[3],vesselType[4],vesselType[5],"Total" );
@@ -172,7 +189,7 @@ namespace KeepingScores
                         vesselGrandTotals[i] += vesselTotals[i];
                     }
                     locationTotal = vesselTotals.Sum();
-                    Console.WriteLine(formatReportTwo, oceanNames[locale - 1], vesselTotals[0], vesselTotals[1], vesselTotals[2], vesselTotals[3], vesselTotals[4], vesselTotals[5], locationTotal);
+                    Console.WriteLine(formatReportTwo, oceanNames[locale-1], vesselTotals[0], vesselTotals[1], vesselTotals[2], vesselTotals[3], vesselTotals[4], vesselTotals[5], locationTotal);
                     locationChange++;
                     for (int i = 0; i < vesselTotals.Length; i++)
                     {
@@ -210,27 +227,27 @@ namespace KeepingScores
         }//EOM
 
         //Method adds 1 to the relevant vessel type array
-        static void VesselSortAndTotal(int[] totlas, int f)
+        static void VesselSortAndTotal(int[] totlas, int t)
         {
-            switch(f)
+            switch(t)
             {
                 case 1:
-                    totlas[f - 1]++;
+                    totlas[t - 1]++;
                     break;
                 case 2:
-                    totlas[f - 1]++;
+                    totlas[t - 1]++;
                     break;
                 case 3:
-                    totlas[f - 1]++;
+                    totlas[t - 1]++;
                     break;
                 case 4:
-                    totlas[f - 1]++;
+                    totlas[t - 1]++;
                     break;
                 case 5:
-                    totlas[f - 1]++;
+                    totlas[t - 1]++;
                     break;
                 case 6:
-                    totlas[f - 1]++;
+                    totlas[t - 1]++;
                     break;
                 default:
                     Console.WriteLine("ERROR IN VESSEL SORT AND TOTAL METHOD");
@@ -245,7 +262,7 @@ namespace KeepingScores
         //method for option 3.
         static void MenuThree()
         {
-            string searchName="", displayMessage="";
+            string searchName = "", displayMessage = "";
             Console.WriteLine("\nMenu option 3: Search for ship name. Type 'exit' to return to main menu.");
 
             while (searchName != "exit")
@@ -299,8 +316,7 @@ namespace KeepingScores
         //contents for quick validation
         static void FileOutput()
         {
-            FileStream fs = new FileStream("FrenchMF.txt", FileMode.Open, FileAccess.Read);
-            StreamReader inputStream = new StreamReader(fs);
+            StreamReader inputStream = new StreamReader("FrenchMF.txt");
             string lineIn = inputStream.ReadLine();
             while(lineIn != null)
             {
@@ -308,6 +324,7 @@ namespace KeepingScores
                 lineIn = inputStream.ReadLine();
             }
 
+            inputStream.Close();
         }//EOM
 
     }
