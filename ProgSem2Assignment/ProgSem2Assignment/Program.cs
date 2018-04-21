@@ -238,7 +238,7 @@ namespace KeepingScores
             int[] oceanTotals = { 0, 0, 0, 0, 0 };
 
             string lineIn;
-            int type, locale = 0, locationChange = 1, grandTotal = 0, locationTotal = 0;
+            int type, locale = 0, locationChange = 2, grandTotal = 0, locationTotal = 0;
             StreamReader inputStream = new StreamReader("FrenchMF.txt");
             lineIn = inputStream.ReadLine();
 
@@ -251,22 +251,25 @@ namespace KeepingScores
                 type = int.Parse(fields[1]);
                 locale = int.Parse(fields[4]);
 
-                if (locale != locationChange)
+                VesselSortAndTotal(vesselTotals, type);
+                locationTotal = vesselTotals.Sum();
+                if (locale == locationChange) 
                 {
+                    
+
+                    Console.WriteLine(formatReportTwo, oceanNames[locale - 2], vesselTotals[0], vesselTotals[1], vesselTotals[2], vesselTotals[3], vesselTotals[4], vesselTotals[5], locationTotal);
                     for (int i = 0; i < vesselGrandTotals.Length; i++)
                     {
                         vesselGrandTotals[i] += vesselTotals[i];
                     }
-                    locationTotal = vesselTotals.Sum();
-                    Console.WriteLine(formatReportTwo, oceanNames[locale - 2], vesselTotals[0], vesselTotals[1], vesselTotals[2], vesselTotals[3], vesselTotals[4], vesselTotals[5], locationTotal);
-                    locationChange++;
                     for (int i = 0; i < vesselTotals.Length; i++)
                     {
                         vesselTotals[i] = 0;
                     }
+                    locationChange++;
                 }
 
-                VesselSortAndTotal(vesselTotals, type);
+
 
                 grandTotal += 1;
                 lineIn = inputStream.ReadLine();
