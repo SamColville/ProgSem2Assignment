@@ -202,36 +202,26 @@ namespace KeepingScores
             }
         }
 
-
-
-
-
-
-
-
-
-
-
         //Option 2 start
         //Method for option 2. 
         static void MenuTwo()
         {
-            int[] vesselGrandTotals = { 0, 0, 0, 0, 0, 0 };
             Console.WriteLine("");
             Console.WriteLine("Menu option 2");
             Console.WriteLine("");
-            int finalTotal = MenuTwoReport(vesselGrandTotals);
+            int finalTotal = MenuTwoReport();
             Console.WriteLine("");
-            Console.WriteLine(formatReportTwo, "Grand Total", vesselGrandTotals[0], vesselGrandTotals[1], vesselGrandTotals[2], vesselGrandTotals[3], vesselGrandTotals[4], vesselGrandTotals[5], finalTotal);
+            Console.WriteLine(formatReportTwo, "Grand Total", "", "", "", "", "", "", finalTotal);
             Console.WriteLine("");
             //Pause at the end of report before returning to menu.
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
         }//EOM * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
 
+
         //Report method for displaying a breakdown of fleet
         //in each ocean
-        static int MenuTwoReport(int[] vesselGrandTotals)
+        static int MenuTwoReport()
         {
             string[] fields = new string[5];
             int[] vesselTotals = { 0, 0, 0, 0, 0, 0 };
