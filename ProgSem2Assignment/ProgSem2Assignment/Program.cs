@@ -14,6 +14,7 @@
 
 using System;
 using System.IO;
+using System.Globalization;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -248,10 +249,7 @@ namespace KeepingScores
                     
 
                     Console.WriteLine(formatReportTwo, oceanNames[locale - 2], vesselTotals[0], vesselTotals[1], vesselTotals[2], vesselTotals[3], vesselTotals[4], vesselTotals[5], locationTotal);
-                    for (int i = 0; i < vesselGrandTotals.Length; i++)
-                    {
-                        vesselGrandTotals[i] += vesselTotals[i];
-                    }
+
                     for (int i = 0; i < vesselTotals.Length; i++)
                     {
                         vesselTotals[i] = 0;
@@ -347,10 +345,11 @@ namespace KeepingScores
                 fields = lineIn.Split(',');
                 locale = int.Parse(fields[4]);
 
-                if (searchName == fields[0])
+                if (String.Compare(searchName, fields[0], CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase) == 0)
                 {
-                    locationStr = oceanNames[locale - 1];
+                    locationStr = oceanNames[locale];
                     message = "Location :   " + locationStr;
+                    break;
                 }
                 else
                 {
@@ -361,7 +360,11 @@ namespace KeepingScores
             }
             inputStream.Close();
             return message;
-        }//EOM * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+        }//EOM * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+
+
+
 
         //Used in development to diaplay file
         //contents for quick validation
