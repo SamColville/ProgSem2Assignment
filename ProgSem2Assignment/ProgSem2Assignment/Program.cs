@@ -339,6 +339,7 @@ namespace KeepingScores
             FileStream fs = new FileStream("FrenchMF.txt", FileMode.Open, FileAccess.Read);
             StreamReader inputStream = new StreamReader(fs);
             lineIn = inputStream.ReadLine();
+            message = "No match found. Please try again.";
 
             while (lineIn != null)
             {
@@ -347,13 +348,9 @@ namespace KeepingScores
 
                 if (String.Compare(searchName, fields[0], CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase) == 0)
                 {
-                    locationStr = oceanNames[locale];
+                    locationStr = oceanNames[locale -1];
                     message = "Location :   " + locationStr;
-                    break;
-                }
-                else
-                {
-                    message = "No match found. Please try again";
+
                 }
 
                 lineIn = inputStream.ReadLine();
