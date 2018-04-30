@@ -25,7 +25,7 @@ namespace KeepingScores
     class Program
     {
         //Format strings for reports
-        static string formatReportOne = "{0,-15}{1,-15}{2,-15}{3,10}{4,15}{5,20}";
+        static string formatReportOne = "{0,-15}{1,-15}{2,-15}{3,10:N0}{4,15:N0}{5,20:C2}";
         static string formatReportTwo = "{0,-15}{1,11}{2,11}{3,11}{4,11}{5,11}{6,11}{7,8}";
         static string lineBreakString = "---";
 
@@ -359,7 +359,12 @@ namespace KeepingScores
             return message;
         }//EOM * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-
+        /*
+        void string LocatonSearch(int locCode)
+        {
+            string locationStr = "";
+            switch
+        }*/
 
 
 
