@@ -1,15 +1,15 @@
-﻿/************************************************************
- * Author:  Sam Colville                                    *
- * Date:    27/03/2018                                      *
- * This Program is designed to make reports based on info   *
- * in a CSV file about French bosts, located around the     *
- * world.                                                   *
- * The CSV file is located in the Debug folder contained    *
- * in this soloution.                                       *
- * Please be aware that the code is designed with this in   *
- * mind.                                                    *
- * NB: EOM signifies 'End of Method' and used               *
- * *********************************************************/
+﻿/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Author:  Sam Colville                                     *
+ * Date:    27/03/2018                                       *
+ * This Program is designed to make reports based on info    *
+ * in a CSV file about French bosts, located around the      *
+ * world.                                                    *
+ * The CSV file is located in the Debug folder contained     *
+ * in this soloution.                                        *
+ * Please be aware that the code is designed with this in    *
+ * mind.                                                     *
+ * NB: EOM signifies 'End of Method' and used                *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 
 using System;
@@ -33,7 +33,7 @@ namespace KeepingScores
         static string[] vesselType = { "AirCarrier", "Battleship", "Destroyer", "Frigate", "NuclearSub", "Minesweep" };
 
 
-        static void Main(string[] args)
+        static void Main()
         {
             int menuOpt = 0;
             while (menuOpt != 4)
@@ -71,6 +71,7 @@ namespace KeepingScores
 
         }
 
+        //Method to display options and read in the user's choice
         static int MenuChoice()
         {
             int choice;
@@ -85,7 +86,7 @@ namespace KeepingScores
             Console.Write("Enter choice :  ");
             choice = int.Parse(Console.ReadLine());
             return choice;
-        }//EOM * * * * * * * * * * * * * * * * 
+        }//EOM x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
 
 
 
@@ -99,40 +100,45 @@ namespace KeepingScores
             Console.WriteLine("");//table formatting
             MenuOneReport();
 
-        }//EOM * * * * * * * * * * * * * * * * 
+        }//EOM x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
 
         //Method goes through csv to calculate cost and total costs/numbers
         //for full report of fleet.
         static void MenuOneReport()
         {
             string[] fields = new string[5];
-            //The following strings deal with data in the following
-            //order: Tonnage, Crew, Crew Cost
-            int[] subTotals = { 0, 0, 0 };
-            int[] grandTotals = { 0, 0, 0 };
-            int[] addToTotal = { 0, 0, 0 };
-            string lineIn;
-            int locationChange = 1;
-            int type, cost, locale;
-            StreamReader inputStream = new StreamReader("FrenchMF.txt");
-            lineIn = inputStream.ReadLine();
 
-            while (lineIn != null)
+            /*The following strings deal with data in the following
+             *order: Tonnage, Crew, Crew Cost */
+
+            //Arrayfor sub totals of ships in each area
+            int[] subTotals = { 0, 0, 0 };
+            //Array for the grand totals in each area
+            int[] grandTotals = { 0, 0, 0 };
+            //Array for mubers that are required to add to the subtotals
+            int[] addToTotal = { 0, 0, 0 };
+
+            string dataLineOne;
+            int locationChange = 1, vesselCode, crewCost, localeCode;
+            StreamReader inputStream = new StreamReader("FrenchMF.txt");
+            dataLineOne = inputStream.ReadLine();
+
+            while (dataLineOne != null)
             {
-                fields = lineIn.Split(',');
-                type = int.Parse(fields[1]);
+                fields = dataLineOne.Split(',');
+                vesselCode = int.Parse(fields[1]);
                 addToTotal[0] = int.Parse(fields[2]);
                 addToTotal[1] = int.Parse(fields[3]);
-                locale = int.Parse(fields[4]);
-                cost = GetCrewCost(type);
-                addToTotal[2] = addToTotal[1] * cost;
+                localeCode = int.Parse(fields[4]);
+                crewCost = GetCrewCost(vesselCode);
+                addToTotal[2] = addToTotal[1] * crewCost;
 
 
                 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
                  * When location changes program will add sub totals
                  * to grand totals, then re-initialise
                  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-                if (locale != locationChange)
+                if (localeCode != locationChange)
                 {
                     ChangeInLocation(subTotals, grandTotals);
                     locationChange++;
@@ -146,10 +152,10 @@ namespace KeepingScores
                 if (addToTotal[0] >= 3500)
                 {
                     TotalsAccumulator(subTotals, addToTotal);
-                    Console.WriteLine(formatReportOne, oceanNames[locale - 1], vesselType[type - 1], fields[0], addToTotal[0], addToTotal[1], addToTotal[2]);
+                    Console.WriteLine(formatReportOne, oceanNames[localeCode - 1], vesselType[vesselCode - 1], fields[0], addToTotal[0], addToTotal[1], addToTotal[2]);
                 }
 
-                lineIn = inputStream.ReadLine();
+                dataLineOne = inputStream.ReadLine();
             }
 
             /* * * * * * * * * * * * * * * * * * * * * * * * * * * 
@@ -169,7 +175,7 @@ namespace KeepingScores
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
 
-        }//EOM * * * * * * * * * * * * * * * * 
+        }//EOM x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
 
         //Method to pass back the crew cost based
         //on type of vessel
@@ -203,8 +209,14 @@ namespace KeepingScores
             }
         }
 
-        //Option 2 start
-        //Method for option 2. 
+
+
+        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+         * Menu Option 2:
+         * Option 2 will generate a report that displays the breakdown of
+         * the fleet in each area; detaling the number of each typr of boat
+         * and total boats in the given area. 
+          * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
         static void MenuTwo()
         {
             Console.WriteLine("");
@@ -217,11 +229,12 @@ namespace KeepingScores
             //Pause at the end of report before returning to menu.
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
-        }//EOM * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+        }//EOM x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
 
 
-        //Report method for displaying a breakdown of fleet
-        //in each ocean
+        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+         * Method that opens the CSV and details the fleet numbers
+         * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
         static int MenuTwoReport()
         {
             string[] fields = new string[5];
@@ -229,7 +242,7 @@ namespace KeepingScores
             int[] oceanTotals = { 0, 0, 0, 0, 0 };
 
             string lineIn;
-            int type, locale = 0, locationChange = 2, grandTotal = 0, locationTotal = 0;
+            int type, localeCode = 0, locationChange = 2, grandTotal = 0, locationTotal = 0;
             StreamReader inputStream = new StreamReader("FrenchMF.txt");
             lineIn = inputStream.ReadLine();
 
@@ -240,15 +253,14 @@ namespace KeepingScores
             {
                 fields = lineIn.Split(',');
                 type = int.Parse(fields[1]);
-                locale = int.Parse(fields[4]);
-
+                localeCode = int.Parse(fields[4]);
                 VesselSortAndTotal(vesselTotals, type);
                 locationTotal = vesselTotals.Sum();
-                if (locale == locationChange) 
+                if (localeCode == locationChange) 
                 {
                     
 
-                    Console.WriteLine(formatReportTwo, oceanNames[locale - 2], vesselTotals[0], vesselTotals[1], vesselTotals[2], vesselTotals[3], vesselTotals[4], vesselTotals[5], locationTotal);
+                    Console.WriteLine(formatReportTwo, oceanNames[localeCode - 2], vesselTotals[0], vesselTotals[1], vesselTotals[2], vesselTotals[3], vesselTotals[4], vesselTotals[5], locationTotal);
 
                     for (int i = 0; i < vesselTotals.Length; i++)
                     {
@@ -264,10 +276,10 @@ namespace KeepingScores
             }
 
             inputStream.Close();
-            Console.WriteLine(formatReportTwo, oceanNames[locale - 1], vesselTotals[0], vesselTotals[1], vesselTotals[2], vesselTotals[3], vesselTotals[4], vesselTotals[5], locationTotal);
+            Console.WriteLine(formatReportTwo, oceanNames[localeCode - 1], vesselTotals[0], vesselTotals[1], vesselTotals[2], vesselTotals[3], vesselTotals[4], vesselTotals[5], locationTotal);
             return grandTotal;
 
-        }//EOM * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+        }//EOM x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
 
         //Method adds 1 to the relevant vessel type array
         static void VesselSortAndTotal(int[] totlas, int t)
@@ -297,20 +309,17 @@ namespace KeepingScores
                     break;
             }
 
-        }//EOM * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+        }//EOM x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
 
 
 
-
-
-
-
-
-
-
-
-
-        //method for option 3.
+        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+         * Menu option 3: 
+         * Option 3 allows the user to searvh the CSV for the name of a specific 
+         * ship. The user need not use special characters such as  or  .
+         * The method will display all areas the ship name occours, but 
+         * code has been included if only the final result is desired.
+         * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * **/
         static void MenuThree()
         {
             string searchName = "", displayMessage = "";
@@ -324,47 +333,108 @@ namespace KeepingScores
                 searchName = Console.ReadLine();
                 displayMessage = SearchForShipName(searchName);
                 searchName = searchName.ToLower();
-                if (searchName != "exit")
+
+                //This is used to write out only the last entry found
+                /*if (searchName != "exit")
                 {
                     Console.WriteLine(displayMessage);
-                }
+                }*/
             }
-        }//EOM * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+        }//EOM x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
 
         static string SearchForShipName(string searchName)
         {
             string[] fields = new string[5];
-            string lineIn, locationStr, message = "";
+            string dataLineTwo, locationStr, message = "No mathch found. Tray again, or type 'exit' to return.";
             int locale;
             FileStream fs = new FileStream("FrenchMF.txt", FileMode.Open, FileAccess.Read);
             StreamReader inputStream = new StreamReader(fs);
-            lineIn = inputStream.ReadLine();
-            message = "No match found. Please try again.";
+            dataLineTwo = inputStream.ReadLine();
 
-            while (lineIn != null)
+            while (dataLineTwo != null)
             {
-                fields = lineIn.Split(',');
+                fields = dataLineTwo.Split(',');
                 locale = int.Parse(fields[4]);
 
+                //
                 if (String.Compare(searchName, fields[0], CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase) == 0)
                 {
                     locationStr = oceanNames[locale -1];
                     message = "Location :   " + locationStr;
-
+                    Console.WriteLine(message);
                 }
 
-                lineIn = inputStream.ReadLine();
+                dataLineTwo = inputStream.ReadLine();
             }
             inputStream.Close();
             return message;
-        }//EOM * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+        }//EOM x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
 
-        /*
-        void string LocatonSearch(int locCode)
+        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+         * The following methods are included from development process
+         * or may be used as alternatives for techniques implemented
+         * in the above code.
+         * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+        //Method may be used if array in the class head must be kept more private
+        static string LocatonSearch(int locCode)
         {
             string locationStr = "";
-            switch
-        }*/
+            switch(locCode)
+            {
+                case 1:
+                    locationStr = "Pacific";
+                    break;
+                case 2:
+                    locationStr = "Atlantic";
+                    break;
+                case 3:
+                    locationStr = "Mediterranean";
+                    break;
+                case 4:
+                    locationStr = "Indian";
+                    break;
+                case 5:
+                    locationStr = "Other";
+                    break;
+                default:
+                    locationStr = "Error in LocationSearch()";
+                    break;
+            }
+            return locationStr;
+        }
+
+
+        //static string[] vesselType = { "AirCarrier", "Battleship", "Destroyer", "Frigate", "NuclearSub", "Minesweep" };
+        static string BoatType(int boatCode)
+        {
+            string vesselTypeStr;
+            switch(boatCode)
+            {
+                case 1:
+                    vesselTypeStr = "Aircraft Carrier";
+                    break;
+                case 2:
+                    vesselTypeStr = "Battleship";
+                    break;
+                case 3:
+                    vesselTypeStr = "Destroyer";
+                    break;
+                case 4:
+                    vesselTypeStr = "Frigate";
+                    break;
+                case 5:
+                    vesselTypeStr = "Nuclear Submarine";
+                    break;
+                case 6:
+                    vesselTypeStr = "Minesweeper/Minelayer";
+                    break;
+                default:
+                    vesselTypeStr = "Error in BoatType()";
+                    break;
+            }
+            return vesselTypeStr;
+        }
 
 
 
@@ -373,11 +443,11 @@ namespace KeepingScores
         static void FileOutput()
         {
             StreamReader inputStream = new StreamReader("FrenchMF.txt");
-            string lineIn = inputStream.ReadLine();
-            while (lineIn != null)
+            string dataLineThree = inputStream.ReadLine();
+            while (dataLineThree != null)
             {
-                Console.WriteLine(lineIn);
-                lineIn = inputStream.ReadLine();
+                Console.WriteLine(dataLineThree);
+                dataLineThree = inputStream.ReadLine();
             }
 
             inputStream.Close();
