@@ -506,7 +506,6 @@ namespace KeepingScores
                 {
                     Console.WriteLine("Ship found: {0}", fields[0]);
                     message = "Ship(s) found";
-                    Console.WriteLine();
                 }
 
                 dataLineFive = inputStreamFive.ReadLine();
