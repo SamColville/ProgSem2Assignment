@@ -27,16 +27,17 @@ namespace KeepingScores
         //Format strings for reports
         static string formatReportOne = "{0,-15}{1,-15}{2,-15}{3,10:N0}{4,15:N0}{5,20:C2}";
         static string formatReportTwo = "{0,-15}{1,11}{2,11}{3,11}{4,11}{5,11}{6,11}{7,8}";
+        static string formatReportFour = "{0,-15}{1,-15}{2,-15}";
         static string lineBreakString = "---";
 
         static string[] oceanNames = { "Pacific", "Atlantic", "Mediterranean", "Indian Ocean", "Other Seas" };
-        static string[] vesselType = { "AirCarrier", "Battleship", "Destroyer", "Frigate", "NuclearSub", "Minesweep" };
+        static string[] vesselType = { "AirCarrier", "Battleship", "Destroyer", "Frigate", "NuclearSub", "Minesweeper" };
 
 
         static void Main()
         {
             int menuOpt = 0;
-            while (menuOpt != 4)
+            while (menuOpt != 5)
             {
                 menuOpt = MenuChoice();
                 switch (menuOpt)
@@ -51,11 +52,20 @@ namespace KeepingScores
                         MenuThree();
                         break;
                     case 4:
+                        MenuFour();
                         break;
                     case 5:
-                        FileOutput();
+                        MenuFive();
                         break;
                     case 6:
+                        //exit program
+                        break;
+
+                        //used in development
+                    case 7:
+                        FileOutput();
+                        break;
+                    case 8:
                         NumberOfRecord();
                         break;
                     default:
@@ -76,15 +86,20 @@ namespace KeepingScores
         {
             int choice;
             Console.WriteLine("");//Used for formatting
-            Console.WriteLine("Menu");
-            Console.WriteLine("");
+            Console.WriteLine("Main Menu");
+            Console.WriteLine("[Enter a number corresponding to the menu option you would like]");
             Console.WriteLine("1. Vessel Report");
             Console.WriteLine("2. Location Analysis Report");
             Console.WriteLine("3. Search for Vessel");
-            Console.WriteLine("4. Exit");
+            Console.WriteLine("4. Vessel Type Search");
+            Console.WriteLine("5. Search for Vessel in Location");
+            Console.WriteLine("6. Exit");
             Console.WriteLine("");
             Console.Write("Enter choice :  ");
-            choice = int.Parse(Console.ReadLine());
+            if(!int.TryParse(Console.ReadLine(),out choice))
+            {
+                Console.WriteLine("Please enter a number, 1, 2, 3 or 4.");
+            }
             return choice;
         }//EOM x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
 
@@ -95,7 +110,8 @@ namespace KeepingScores
         //Method for option 1.
         static void MenuOne()
         {
-            Console.WriteLine("\nMenu option 1");
+            Console.WriteLine("\nMenu option 1:");
+            Console.WriteLine("Vessel Report");
             Console.WriteLine(formatReportOne, "Location", "Function", "Vessel Name", "Tonnage", "Crew", "Monthly Cost");
             Console.WriteLine("");//table formatting
             MenuOneReport();
@@ -220,8 +236,8 @@ namespace KeepingScores
         static void MenuTwo()
         {
             Console.WriteLine("");
-            Console.WriteLine("Menu option 2");
-            Console.WriteLine("");
+            Console.WriteLine("Menu option 2:");
+            Console.WriteLine("Location Analysis Report");
             int finalTotal = MenuTwoReport();
             Console.WriteLine("");
             Console.WriteLine(formatReportTwo, "Grand Total", "", "", "", "", "", "", finalTotal);
@@ -323,7 +339,8 @@ namespace KeepingScores
         static void MenuThree()
         {
             string searchName = "", displayMessage = "";
-            Console.WriteLine("\nMenu option 3: Search for ship name. Type 'exit' to return to main menu.");
+            Console.WriteLine("\nMenu option 3:");
+            Console.WriteLine("Search for ship by name. Type 'exit' to return to main menu.");
 
             while (searchName != "exit")
             {
@@ -342,18 +359,19 @@ namespace KeepingScores
             }
         }//EOM x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
 
+
         static string SearchForShipName(string searchName)
         {
             string[] fields = new string[5];
-            string dataLineTwo, locationStr, message = "No mathch found. Tray again, or type 'exit' to return.";
+            string dataLineThree, locationStr, message = "No mathch found. Tray again, or type 'exit' to return.";
             int locale;
             FileStream fs = new FileStream("FrenchMF.txt", FileMode.Open, FileAccess.Read);
             StreamReader inputStream = new StreamReader(fs);
-            dataLineTwo = inputStream.ReadLine();
+            dataLineThree = inputStream.ReadLine();
 
-            while (dataLineTwo != null)
+            while (dataLineThree != null)
             {
-                fields = dataLineTwo.Split(',');
+                fields = dataLineThree.Split(',');
                 locale = int.Parse(fields[4]);
 
                 //
@@ -364,11 +382,140 @@ namespace KeepingScores
                     Console.WriteLine(message);
                 }
 
-                dataLineTwo = inputStream.ReadLine();
+                dataLineThree = inputStream.ReadLine();
             }
             inputStream.Close();
             return message;
         }//EOM x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
+
+
+        /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+         * Menu Option 4:
+         * This option allows the user to see detailed
+         * analysis on where each type of vessel is located,
+         * and the names of those vessels.
+         * * * * * * * * * * * * * * * * * * * * * * * * * * * *  * */
+        static void MenuFour()
+        {
+            string searchCode = "";
+            Console.WriteLine("Menu Option 4 :");
+            Console.WriteLine("[Enter the vessel type code from the list below.");
+            while (searchCode != "exit")
+            {
+                for (int i = 0; i < vesselType.Length; i++)
+                {
+                    Console.WriteLine("{0}. {1}", i + 1, vesselType[i]);
+                }
+
+                Console.Write("Enter vessel code :   ");
+
+                searchCode = Console.ReadLine();
+                searchCode = searchCode.ToLower();
+                if (searchCode != "exit")
+                {
+                    VesselSearch(searchCode);
+                }
+            }
+        }//EOM x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
+
+        static void VesselSearch(string searchCode)
+        {
+            string[] fields = new string[5];
+            string dataLineFour;
+            int locale,typeCode;
+
+            FileStream fs = new FileStream("FrenchMF.txt", FileMode.Open, FileAccess.Read);
+            StreamReader inputStream = new StreamReader(fs);
+            dataLineFour = inputStream.ReadLine();
+            Console.WriteLine("");
+            Console.WriteLine(formatReportFour, "Vessel Type","Location","Name");
+            Console.WriteLine(formatReportFour, lineBreakString, lineBreakString, lineBreakString);
+
+            while (dataLineFour != null)
+            {
+                fields = dataLineFour.Split(',');
+                locale = int.Parse(fields[4]);
+                typeCode = int.Parse(fields[1]);
+                if(searchCode == fields[1])
+                {
+                    Console.WriteLine(formatReportFour, vesselType[typeCode-1],oceanNames[locale-1],fields[0]);
+                }
+
+                dataLineFour = inputStream.ReadLine();
+            }
+            Console.WriteLine("");
+            inputStream.Close();
+        }//EOM x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
+
+
+
+        static void MenuFive()
+        {
+            string message = "";
+            int locationCode = 0, typeCode = 0;
+            Console.WriteLine("");
+            Console.WriteLine("Please enter a location:");
+            while(locationCode != -999)
+            {
+                for (int i = 0; i < oceanNames.Length; i++)
+                {
+                    Console.WriteLine("{0}. {1}", i + 1, oceanNames[i]);
+                }
+                Console.Write("Enter code:  ");
+                locationCode = int.Parse(Console.ReadLine());
+                if(locationCode == -999)
+                {
+                    break;
+                }
+
+
+                Console.WriteLine("");
+                Console.WriteLine("Now enter a vessel type:");
+                for (int i = 0; i < vesselType.Length; i++)
+                {
+                    Console.WriteLine("{0}. {1}", i + 1, vesselType[i]);
+                }
+                Console.Write("Enter code:  ");
+                typeCode = int.Parse(Console.ReadLine());
+                Console.WriteLine("");
+
+                message = LocationTypeSearch(locationCode, typeCode);
+                Console.WriteLine(message);
+                Console.WriteLine(lineBreakString);
+
+            }
+        }
+
+
+
+        static string LocationTypeSearch(int inputLocale, int inputType)
+        {
+            string[] fields = new string[5];
+            string dataLineFive, message = "No matches found. Try again or type -999 to return to Main Menu.";
+            int locale, typeCode;
+
+            FileStream fs = new FileStream("FrenchMF.txt", FileMode.Open, FileAccess.Read);
+            StreamReader inputStream = new StreamReader(fs);
+            dataLineFive = inputStream.ReadLine();
+
+            while(dataLineFive != null)
+            {
+                fields = dataLineFive.Split(',');
+                typeCode = int.Parse(fields[1]);
+                locale = int.Parse(fields[4]);
+
+                if(locale == inputLocale && typeCode == inputType)
+                {
+                    Console.WriteLine("Ship found: {0}", fields[0]);
+                    message = "Ship(s) found";
+                    Console.WriteLine();
+                }
+
+                dataLineFive = inputStream.ReadLine();
+            }
+            inputStream.Close();
+            return message;
+        }
 
         /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
          * The following methods are included from development process
