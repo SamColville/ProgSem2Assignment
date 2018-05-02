@@ -136,8 +136,8 @@ namespace KeepingScores
 
             string dataLineOne;
             int locationChange = 1, vesselCode, crewCost, localeCode;
-            StreamReader inputStream = new StreamReader("FrenchMF.txt");
-            dataLineOne = inputStream.ReadLine();
+            StreamReader inputStreamOne = new StreamReader("FrenchMF.txt");
+            dataLineOne = inputStreamOne.ReadLine();
 
             while (dataLineOne != null)
             {
@@ -171,7 +171,7 @@ namespace KeepingScores
                     Console.WriteLine(formatReportOne, oceanNames[localeCode - 1], vesselType[vesselCode - 1], fields[0], addToTotal[0], addToTotal[1], addToTotal[2]);
                 }
 
-                dataLineOne = inputStream.ReadLine();
+                dataLineOne = inputStreamOne.ReadLine();
             }
 
             /* * * * * * * * * * * * * * * * * * * * * * * * * * * 
@@ -185,7 +185,7 @@ namespace KeepingScores
             Console.WriteLine("");
             Console.WriteLine(formatReportOne, "Grand Totals", "---", "---", grandTotals[0], grandTotals[1], grandTotals[2]);
             Console.WriteLine("");
-            inputStream.Close();
+            inputStreamOne.Close();
 
             //ReadKey to provide pause before returning to menu
             Console.WriteLine("Press any key to continue...");
@@ -259,8 +259,8 @@ namespace KeepingScores
 
             string lineIn;
             int type, localeCode = 0, locationChange = 2, grandTotal = 0, locationTotal = 0;
-            StreamReader inputStream = new StreamReader("FrenchMF.txt");
-            lineIn = inputStream.ReadLine();
+            StreamReader inputStreamTwo = new StreamReader("FrenchMF.txt");
+            lineIn = inputStreamTwo.ReadLine();
 
             Console.WriteLine(formatReportTwo, "Location", vesselType[0], vesselType[1], vesselType[2], vesselType[3], vesselType[4], vesselType[5], "Total");
             Console.WriteLine("");//table formatting
@@ -288,10 +288,10 @@ namespace KeepingScores
 
 
                 grandTotal += 1;
-                lineIn = inputStream.ReadLine();
+                lineIn = inputStreamTwo.ReadLine();
             }
 
-            inputStream.Close();
+            inputStreamTwo.Close();
             Console.WriteLine(formatReportTwo, oceanNames[localeCode - 1], vesselTotals[0], vesselTotals[1], vesselTotals[2], vesselTotals[3], vesselTotals[4], vesselTotals[5], locationTotal);
             return grandTotal;
 
@@ -365,9 +365,9 @@ namespace KeepingScores
             string[] fields = new string[5];
             string dataLineThree, locationStr, message = "No mathch found. Tray again, or type 'exit' to return.";
             int locale;
-            FileStream fs = new FileStream("FrenchMF.txt", FileMode.Open, FileAccess.Read);
-            StreamReader inputStream = new StreamReader(fs);
-            dataLineThree = inputStream.ReadLine();
+
+            StreamReader inputStreamThree = new StreamReader("FrenchMF.txt");
+            dataLineThree = inputStreamThree.ReadLine();
 
             while (dataLineThree != null)
             {
@@ -382,9 +382,9 @@ namespace KeepingScores
                     Console.WriteLine(message);
                 }
 
-                dataLineThree = inputStream.ReadLine();
+                dataLineThree = inputStreamThree.ReadLine();
             }
-            inputStream.Close();
+            inputStreamThree.Close();
             return message;
         }//EOM x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
 
@@ -424,9 +424,8 @@ namespace KeepingScores
             string dataLineFour;
             int locale,typeCode;
 
-            FileStream fs = new FileStream("FrenchMF.txt", FileMode.Open, FileAccess.Read);
-            StreamReader inputStream = new StreamReader(fs);
-            dataLineFour = inputStream.ReadLine();
+            StreamReader inputStreamFour = new StreamReader("FrenchMF.txt");
+            dataLineFour = inputStreamFour.ReadLine();
             Console.WriteLine("");
             Console.WriteLine(formatReportFour, "Vessel Type","Location","Name");
             Console.WriteLine(formatReportFour, lineBreakString, lineBreakString, lineBreakString);
@@ -441,10 +440,10 @@ namespace KeepingScores
                     Console.WriteLine(formatReportFour, vesselType[typeCode-1],oceanNames[locale-1],fields[0]);
                 }
 
-                dataLineFour = inputStream.ReadLine();
+                dataLineFour = inputStreamFour.ReadLine();
             }
             Console.WriteLine("");
-            inputStream.Close();
+            inputStreamFour.Close();
         }//EOM x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x x
 
 
@@ -494,9 +493,8 @@ namespace KeepingScores
             string dataLineFive, message = "No matches found. Try again or type -999 to return to Main Menu.";
             int locale, typeCode;
 
-            FileStream fs = new FileStream("FrenchMF.txt", FileMode.Open, FileAccess.Read);
-            StreamReader inputStream = new StreamReader(fs);
-            dataLineFive = inputStream.ReadLine();
+            StreamReader inputStreamFive = new StreamReader("FrenchMF.txt");
+            dataLineFive = inputStreamFive.ReadLine();
 
             while(dataLineFive != null)
             {
@@ -511,9 +509,9 @@ namespace KeepingScores
                     Console.WriteLine();
                 }
 
-                dataLineFive = inputStream.ReadLine();
+                dataLineFive = inputStreamFive.ReadLine();
             }
-            inputStream.Close();
+            inputStreamFive.Close();
             return message;
         }
 
